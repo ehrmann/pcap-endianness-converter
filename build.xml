@@ -1,0 +1,48 @@
+<project name="pcap-endianness-converter" default="dist" basedir=".">
+    <description></description>
+
+    <property name="src" location="src" />
+    <property name="bin" location="bin" />
+    <property name="dist" location="dist" />
+    <property name="lib" location="lib" />
+
+    <taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask"
+        classpath="${dist}/one-jar-ant-task-0.97.jar" onerror="report" />
+
+    <target name="init">
+        <mkdir dir="${bin}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the source ">
+        <javac srcdir="${src}" destdir="${bin}" includeantruntime="false" debug="true">
+            <classpath>
+                <fileset dir="${lib}">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="dist" depends="compile" description="generate the distribution">
+        <one-jar destfile="${dist}/pcap-endianness-converter.jar">
+            <manifest>
+                <attribute name="One-Jar-Main-Class" value="pcap.converter.PCAPEndiannessConverterMain" />
+            </manifest>
+            <main>
+                <fileset dir="${bin}">
+                    <include name="**/*.class" />
+                </fileset>
+            </main>
+            <lib>
+                <fileset dir="${lib}" erroronmissingdir="false">
+                    <include name="**/*.jar" />
+                </fileset>
+            </lib>
+        </one-jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="${bin}" />
+        <delete file="${dist}/pcap-endianness-converter.jar" />
+    </target>
+</project>
