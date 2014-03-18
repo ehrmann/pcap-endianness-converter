@@ -27,6 +27,9 @@ public class GlobalHeader {
     	if (this.magic_number != MAGIC_NUMBER) {
     		throw new PCAPParseException("Bad magic number");
     	}
+    	if (this.getVersionMajor() != 2 || this.getVersionMinor() != 4) {
+    		throw new PCAPParseException(String.format("Unsupported version: %d.%d", this.getVersionMajor(), this.getVersionMinor()));
+    	}
     }
     
     public void putToByteBuffer(ByteBuffer buffer) {
@@ -37,5 +40,17 @@ public class GlobalHeader {
     	buffer.putInt(this.sigfigs);
     	buffer.putInt(this.snaplen);
     	buffer.putInt(this.network);
+    }
+    
+    public long getSnaplen() {
+    	return this.snaplen & 0xffffffff;
+    }
+    
+    public int getVersionMajor() {
+    	return this.version_major & 0xffff;
+    }
+    
+    public int getVersionMinor() {
+    	return this.version_minor & 0xffff;
     }
 }

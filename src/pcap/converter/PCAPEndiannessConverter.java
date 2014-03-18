@@ -14,9 +14,6 @@ import pcap.RecordHeader;
 
 public class PCAPEndiannessConverter {
 	
-	// This is ~100x larger than a Jumbo Frame
-	protected final int MAX_RECORD_SIZE = 1024 * 1024;
-	
 	protected final OutputStream out;
 	protected final PushbackInputStream in;
 	
@@ -36,7 +33,7 @@ public class PCAPEndiannessConverter {
 		long converted = 0;
 		long ignored = 0;
 		
-		byte[] buffer = new byte[MAX_RECORD_SIZE];
+		byte[] buffer = new byte[(int)Math.min(globalHeaderWithByteOrder.globalHeader.getSnaplen(), Integer.MAX_VALUE)];
 		
 		int peek;
 		while ((peek = this.in.read()) >= 0) {
@@ -44,23 +41,23 @@ public class PCAPEndiannessConverter {
 			
 			RecordHeader recordHeader = readRecordHeader(globalHeaderWithByteOrder.order);
 			
-			if (recordHeader.incl_len > MAX_RECORD_SIZE) {
+			if (recordHeader.getInclLen() > buffer.length) {
 				ignored++;
 				
 				long totalRead = 0;
 				int read;
-				while ((read = this.in.read(buffer, 0, (int)Math.min(recordHeader.incl_len - totalRead, buffer.length))) >= 0) {
+				while (recordHeader.getInclLen() - totalRead > 0 && (read = this.in.read(buffer, 0, (int)Math.min(recordHeader.getInclLen() - totalRead, buffer.length))) >= 0) {
 					totalRead += read;
 				}
 			} else {
 				int offset = 0;
 				int read;
-				while (recordHeader.incl_len - offset > 0 && (read = this.in.read(buffer, offset, recordHeader.incl_len - offset)) >= 0) {
+				while (recordHeader.getInclLen() - offset > 0 && (read = this.in.read(buffer, offset, (int)recordHeader.getInclLen() - offset)) >= 0) {
 					offset += read;
 				}
 				
 				// Incomplete read, i.e. EOF
-				if (offset < recordHeader.incl_len) {
+				if (offset < recordHeader.getInclLen()) {
 					ignored++;
 				}
 				// Complete read

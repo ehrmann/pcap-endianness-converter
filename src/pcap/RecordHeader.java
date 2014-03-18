@@ -24,4 +24,12 @@ public class RecordHeader {
     	buffer.putInt(this.incl_len);
     	buffer.putInt(this.orig_len);
     }
+    
+    public long getInclLen() {
+    	return this.incl_len & 0xffffffff;
+    }
+    
+    public long getOrigLen() {
+    	return this.orig_len & 0xffffffff;
+    }
 }
