@@ -47,8 +47,8 @@ public class PCAPEndiannessConverterMain {
 				PCAPEndiannessConverter converter = new PCAPEndiannessConverter(out, in, order);
 				Stats stats = converter.convert();
 				
-				System.err.printf("Records converted: %d", stats.converted);
-				System.err.printf("Records ignored: %d", stats.ignored);
+				System.err.printf("Records converted: %d\n", stats.converted);
+				System.err.printf("Records ignored: %d\n", stats.ignored);
 				
 			} catch (FileNotFoundException e) {
 				System.err.println("Unable to open output file '" + outputFile + "': " + e.getMessage());
