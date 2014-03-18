@@ -4,27 +4,29 @@ import java.nio.ByteBuffer;
 
 public class GlobalHeader {
 
+	// See http://wiki.wireshark.org/Development/LibpcapFileFormat
+	
 	public static final int GLOBAL_HEADER_SIZE = 24;
 	public static final int MAGIC_NUMBER = 0xa1b2c3d4;
 	
-    public final int magic_number;
-    public final short version_major;
-    public final short version_minor;
-    public final int  thiszone;
-    public final int sigfigs;
-    public final int snaplen;
+    public final int magicNumber;
+    public final short versionMajor;
+    public final short versionMinor;
+    public final int  thisZone;
+    public final int sigFigs;
+    public final int snapLen;
     public final int network;
 
     public GlobalHeader(ByteBuffer buffer) throws PCAPParseException {
-    	this.magic_number = buffer.getInt();
-    	this.version_major = buffer.getShort();
-    	this.version_minor = buffer.getShort();
-    	this.thiszone = buffer.getInt();
-    	this.sigfigs = buffer.getInt();
-    	this.snaplen = buffer.getInt();
+    	this.magicNumber = buffer.getInt();
+    	this.versionMajor = buffer.getShort();
+    	this.versionMinor = buffer.getShort();
+    	this.thisZone = buffer.getInt();
+    	this.sigFigs = buffer.getInt();
+    	this.snapLen = buffer.getInt();
     	this.network = buffer.getInt();
     	
-    	if (this.magic_number != MAGIC_NUMBER) {
+    	if (this.magicNumber != MAGIC_NUMBER) {
     		throw new PCAPParseException("Bad magic number");
     	}
     	if (this.getVersionMajor() != 2 || this.getVersionMinor() != 4) {
@@ -33,24 +35,24 @@ public class GlobalHeader {
     }
     
     public void putToByteBuffer(ByteBuffer buffer) {
-    	buffer.putInt(this.magic_number);
-    	buffer.putShort(this.version_major);
-    	buffer.putShort(this.version_minor);
-    	buffer.putInt(this.thiszone);
-    	buffer.putInt(this.sigfigs);
-    	buffer.putInt(this.snaplen);
+    	buffer.putInt(this.magicNumber);
+    	buffer.putShort(this.versionMajor);
+    	buffer.putShort(this.versionMinor);
+    	buffer.putInt(this.thisZone);
+    	buffer.putInt(this.sigFigs);
+    	buffer.putInt(this.snapLen);
     	buffer.putInt(this.network);
     }
     
     public long getSnaplen() {
-    	return this.snaplen & 0xffffffff;
+    	return this.snapLen & 0xffffffff;
     }
     
     public int getVersionMajor() {
-    	return this.version_major & 0xffff;
+    	return this.versionMajor & 0xffff;
     }
     
     public int getVersionMinor() {
-    	return this.version_minor & 0xffff;
+    	return this.versionMinor & 0xffff;
     }
 }
