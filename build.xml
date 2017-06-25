@@ -14,6 +14,7 @@
     </target>
 
     <target name="compile" depends="init" description="compile the source ">
+        <mkdir dir="${lib}" />
         <javac srcdir="${src}" destdir="${bin}" includeantruntime="false" debug="true">
             <classpath>
                 <fileset dir="${lib}">
